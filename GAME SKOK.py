@@ -11,10 +11,11 @@ c.pack()
 t.update()
 
 class ball:
-    def __init__(self, canvas, color):
+    def __init__(self, canvas, rack, color):
         self.canvas = canvas
         self.id = canvas.create_oval(10,10, 25, 25, fill= color)
         self.canvas.move(self.id, 400, 300)
+        self.rack = rack
         starts = [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         random.shuffle(starts)
         self.x = starts[0]
@@ -25,23 +26,50 @@ class ball:
     def draw(self):
         self.canvas.move(self.id, self.x, self.y)
         pos = self.canvas.coords(self.id)
+        if self.hit_rack(pos) == True:
+            self.y = -3
         if pos[1] <= 0:
-            #self.y = -1 * self.y
             self.y = random.randint(1, 5)
         if pos [3] >= self.canvas_height:
-            #self.y = -1 * self.y
             self.y = random.randint(-5, -1)
         if pos [0] <= 0:
-            #self.x = -1 * self.x
             self.x = random.randint(1, 5)
         if pos [2] >= self.canvas_width:
-            #self.x = -1 * self.x
             self.x = random.randint(-5, -1)
+    def hit_rack(self, pos):
+        rack_pos = self.canvas.coords(self.rack.id)
+        if pos [0] <= rack_pos[2] and pos [2] >= rack_pos[0]:
+            if pos [3] >= rack_pos[1] and pos [1] <= rack_pos[3]:
+                return True
+        return False
+class racket:
+    def __init__(self, canvas, color):
+        self.canvas = canvas
+        self.id = canvas.create_rectangle(-20,0, 120, 10, fill= color)
+        self.canvas.move(self.id, 400, 500)
+        self.x = 0
+        self.canvas_width = self.canvas.winfo_width() 
+        self.canvas.bind_all('<KeyPress-Right>', self.right)
+        self.canvas.bind_all('<KeyPress-Left>', self.left)
+    def draw(self):
+        self.canvas.move(self.id, self.x, 0)
+        pos = self.canvas.coords(self.id)
+        if pos [0] <= 0:
+            self.x = 0
+        elif pos [2]>= self.canvas_width:
+            self.x = 0
+    def right(self, evt):
+        self.x = 4
+
+    def left(self, evt):
+        self.x = -4 
         
-b = ball(c, "red")
+rack = racket(c, "blue")           
+Ball = ball(c, rack, "red")
 
 while 1:
-    b.draw()
+    rack.draw()
+    Ball.draw()
     t.update_idletasks()
     t.update()
     time.sleep(0.01)
