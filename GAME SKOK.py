@@ -9,11 +9,8 @@ class ball:
         self.id = canvas.create_oval(10,10, 25, 25, fill= color)
         self.canvas.move(self.id, 400, 300)
         self.rack = rack
-        starts = [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        random.shuffle(starts)
-        self.x = starts[0]
-        random.shuffle(starts)
-        self.y = starts[0]
+        self.x = random.randint(-7,-1)
+        self.y = random.randint(-7,-1)
         self.canvas_height = self.canvas.winfo_height()
         self.canvas_width = self.canvas.winfo_width()
         self.bottom = False
@@ -62,7 +59,6 @@ class racket:
         self.x = -10
         self.draw('left')
  
-
 t = Tk()
 t.title("Game Skok")
 t.resizable(0, 0)
@@ -77,29 +73,25 @@ life = 5
 c.create_text(400,20, text = 'lives left = %s' % life, font = ('Times', 18), tag = 'delete')
 while 1:
     Ball.draw()
-    if Ball.bottom == True and life >= 2:
+    if Ball.bottom == True:
         life = life - 1
         c.delete('delete')
         c.create_text(400,20, text = 'lives left = %s' % life, font = ('Times', 18), tag = 'delete')
+        
+        if life >= 1:
+            mb.showinfo("The ball is fall down","Try Again")
+        else:
+            mb.showinfo("Oh, no!","you lost")
+            break
+        
         Ball.bottom = False
         c.coords(Ball.id,10,10, 25, 25)
         c.move(Ball.id, 400, 300)
         Ball.x = random.randint(-5,-1)
         Ball.y = random.randint(-5,-1)
-        mb.showinfo("The ball is fall down","Try againe")
     t.update_idletasks()
     t.update()
     time.sleep(0.01)
-    if Ball.bottom == True and life == 1:
-        life = life - 1
-        c.delete('delete')
-        c.create_text(400,20, text = 'lives left = %s' % life, font = ('Times', 18), tag = 'delete')
-        Ball.bottom = False
-        c.coords(Ball.id,10,10, 25, 25)
-        c.move(Ball.id, 400, 300)
-        Ball.x = random.randint(-5,-1)
-        Ball.y = random.randint(-5,-1)
-    if life == 0:
-        mb.showinfo("Oh, no!","you lost")
-        break
+
+        
         
