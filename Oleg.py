@@ -24,16 +24,18 @@ class ball:
             self.x = random.randint(1, 5)
         if pos [2] >= self.canvas_width:
             self.x = random.randint(-5, -1)
+            return False
     def hit_rack(self, pos):
         rack_pos = self.canvas.coords(self.rack.id)
         if pos [0] <= rack_pos[2] and pos [2] >= rack_pos[0]:
             if pos [3] >= rack_pos[1] and pos [1] <= rack_pos[3]:
                 return True
-            return False
+        return False
+
 class racket:
     def __init__(self, canvas, color):
         self.canvas = canvas
-        self.id = canvas.create_rectangle(-20,-4, 120, 10, fill = color)
+        self.id = canvas.create_rectangle(-20,-4, 120, 10, fill= color)
         self.canvas.move(self.id, 380, 550)
         self.x = 0
         self.canvas_width = self.canvas.winfo_width()
@@ -48,9 +50,24 @@ class racket:
         self.canvas.move(self.id, self.x, 0)
         
     def right(self, evt):
-        self.x = 10
+        self.x = 20
         self.draw('right')
 
     def left(self, evt):
-        self.x = -10
+        self.x = -20
         self.draw('left')
+class brick:
+    def __init__(self, canvas, color,x1,y1,x2,y2):
+        self.canvas = canvas
+        self.id = canvas.create_rectangle(x1,y1, x2, y2, fill= color, outline = 'black', width = 2)
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
+        self.canvas_width = self.canvas.winfo_width()
+    def hit_Ball(self, bx1, by1, bx2, by2):
+        if bx1 >= self.x1 and bx1 <= self.x2 and by1 <= self.y2 and by1 >= self.y1:
+            return True
+        else:
+            return False
+
