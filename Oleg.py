@@ -59,6 +59,7 @@ class racket:
 class brick:
     def __init__(self, canvas, color,x1,y1,x2,y2):
         self.canvas = canvas
+        self.color = color
         self.id = canvas.create_rectangle(x1,y1, x2, y2, fill= color, outline = 'black', width = 2)
         self.x1 = x1
         self.y1 = y1
