@@ -1,11 +1,12 @@
 import random
 
 class ball:
-    def __init__(self, canvas, rack, color):
+    def __init__(self, canvas, rack, bot_rack, color):
         self.canvas = canvas
         self.id = canvas.create_oval(10,10, 25, 25, fill= color)
         self.canvas.move(self.id, 400, 300)
         self.rack = rack
+        self.bot_rack = bot_rack
         self.x = random.randint(-7,-1)
         self.y = random.randint(-7,-1)
         self.canvas_height = self.canvas.winfo_height()
@@ -15,6 +16,8 @@ class ball:
         self.canvas.move(self.id, self.x, self.y)
         pos = self.canvas.coords(self.id)
         if self.hit_rack(pos) == True:
+            self.y = -3
+        if self.hit_RackBot(pos) == True:
             self.y = -3
         if pos[1] <= 0:
             self.y = random.randint(1, 5)
@@ -29,6 +32,12 @@ class ball:
         rack_pos = self.canvas.coords(self.rack.id)
         if pos [0] <= rack_pos[2] and pos [2] >= rack_pos[0]:
             if pos [3] >= rack_pos[1] and pos [1] <= rack_pos[3]:
+                return True
+        return False
+    def hit_RackBot(self, pos):
+        RackBot_pos = self.canvas.coords(self.bot_rack.id)
+        if pos [0] <= RackBot_pos[2] and pos [2] >= RackBot_pos[0]:
+            if pos [3] >= RackBot_pos[1] and pos [1] <= RackBot_pos[3]:
                 return True
         return False
 
@@ -56,6 +65,24 @@ class racket:
     def left(self, evt):
         self.x = -20
         self.draw('left')
+        
+class bot_racket:
+    def __init__(self, canvas, color):
+        self.canvas = canvas
+        self.id = canvas.create_rectangle(0, 11, 120, 19, fill= color)
+        self.canvas.move(self.id, 380, 555)
+        starts = [-5, -4, -3, -2, -1, 1, 2, 3, 4, 5]
+        random.shuffle(starts)
+        self.x = starts[0]
+        self.canvas_width = self.canvas.winfo_width()
+    def draw(self):
+        self.canvas.move(self.id, self.x, 0)
+        pos = self.canvas.coords(self.id)
+        if pos [0] <= 0:
+            self.x = random.randint(3, 5)
+        elif pos [2]>= self.canvas_width:
+            self.x = random.randint(-5, -3)
+
 class brick:
     def __init__(self, canvas, color,x1,y1,x2,y2):
         self.canvas = canvas

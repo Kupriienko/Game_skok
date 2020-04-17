@@ -34,26 +34,28 @@ yell = random.randint(0,len(brick_list))
 c.itemconfig(brick_list[yell].id, fill='yellow')
 brick_list[yell].color='yellow'
 
+bot_rack = Oleg.bot_racket(c, "aqua")
 rack = Oleg.racket(c, "blue")
-Ball = Oleg.ball(c, rack, "red")
+Ball = Oleg.ball(c, rack, bot_rack, "red")
 rack_length = False
 Super_Power = False
 h = time.time()
-while 1: 
+while 1:
+    bot_rack.draw()
     Ball.draw()
     b_pos = c.coords(Ball.id)
     
     if Super_Power and time.time() - h > 5.00:
         Super_Power = False
         c.delete('delete')
-        c.itemconfig(rack.id, c.create_rectangle(-20,-4, 120, 10, fill= 'black'))
+        c.itemconfig(Ball.id, fill='red')
     elif Super_Power and time.time() - h < 5.00:
         c.delete('delete')
         c.create_text(400,580, text = 'You got sure powerit will end in ' +str(round(5.00 - (time.time() - h),2)) + 'seconds', font = ('Times', 17), tag = 'delete')
 
     if rack_length and time.time() - h > 10.00:
         rack_length = False
-        c.coords(rack.id, 20, -4, 120, 10)
+        c.coords(rack.id, -20, -4, 120, 10)
         c.move(rack.id, 380, 550)
         c.itemconfig(rack.id, fill='blue')
         c.delete('delete')
