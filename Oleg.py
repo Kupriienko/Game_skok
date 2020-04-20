@@ -1,12 +1,12 @@
 import random
 
 class ball:
-    def __init__(self, canvas, rack, bot_rack, color):
+    def __init__(self, canvas, rack, color):
         self.canvas = canvas
         self.id = canvas.create_oval(10,10, 25, 25, fill= color)
         self.canvas.move(self.id, 400, 300)
         self.rack = rack
-        self.bot_rack = bot_rack
+        self.bot_rackid = 0
         self.x = random.randint(-7,-1)
         self.y = random.randint(-7,-1)
         self.canvas_height = self.canvas.winfo_height()
@@ -35,11 +35,12 @@ class ball:
                 return True
         return False
     def hit_RackBot(self, pos):
-        RackBot_pos = self.canvas.coords(self.bot_rack.id)
-        if pos [0] <= RackBot_pos[2] and pos [2] >= RackBot_pos[0]:
-            if pos [3] >= RackBot_pos[1] and pos [1] <= RackBot_pos[3]:
-                return True
-        return False
+        if self.bot_rackid != 0:
+            RackBot_pos = self.canvas.coords(self.bot_rackid)
+            if pos [0] <= RackBot_pos[2] and pos [2] >= RackBot_pos[0]:
+                if pos [3] >= RackBot_pos[1] and pos [1] <= RackBot_pos[3]:
+                    return True
+            return False
 
 class racket:
     def __init__(self, canvas, color):
@@ -69,19 +70,31 @@ class racket:
 class bot_racket:
     def __init__(self, canvas, color):
         self.canvas = canvas
-        self.id = canvas.create_rectangle(0, 11, 120, 19, fill= color)
+        self.id = 0
+        self.color = color
         self.canvas.move(self.id, 380, 555)
         starts = [-5, -4, -3, -2, -1, 1, 2, 3, 4, 5]
         random.shuffle(starts)
         self.x = starts[0]
         self.canvas_width = self.canvas.winfo_width()
     def draw(self):
-        self.canvas.move(self.id, self.x, 0)
-        pos = self.canvas.coords(self.id)
-        if pos [0] <= 0:
-            self.x = random.randint(3, 5)
-        elif pos [2]>= self.canvas_width:
-            self.x = random.randint(-5, -3)
+        if self.id != 0:
+            self.canvas.move(self.id, self.x, 0)
+            pos = self.canvas.coords(self.id)
+            if pos [0] <= 0:
+                self.x = random.randint(3, 5)
+            elif pos [2]>= self.canvas_width:
+                self.x = random.randint(-5, -3)
+    def show(self):
+        if self.id == 0:
+            self.id = self.canvas.create_rectangle(-90, 11, 150, 19, fill = self.color)
+            self.canvas.move(self.id, 380, 555)
+    def hide(self):
+        self.canvas.delete(self.id)
+        self.id = 0
+
+        
+        
 
 class brick:
     def __init__(self, canvas, color,x1,y1,x2,y2):

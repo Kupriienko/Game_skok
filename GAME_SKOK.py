@@ -14,6 +14,7 @@ l = Label(text='Залишилось життів: %s' % life, font="Arial 18", 
 l.pack()
 c.pack()
 t.update()
+bot_rack_time = 5.0
 
 def end():
     if len(brick_list) == 0:
@@ -24,25 +25,31 @@ brick_list =[]
 
 for i in range(0,800,80):
     for j in range (0,52,13):
-        brick_list.append(Oleg.brick(c,'brown',i,j,i+80,j+13))
-        
+        brick_list.append(Oleg.brick(c,'green',i,j,i+80,j+13))
+
 length = random.randint(0,len(brick_list))
 c.itemconfig(brick_list[length].id, fill='black')
 brick_list[length].color='black'
+        
+bot = random.randint(0,len(brick_list))
+c.itemconfig(brick_list[bot].id, fill='green')
+brick_list[bot].color='green'
 
 yell = random.randint(0,len(brick_list))
 c.itemconfig(brick_list[yell].id, fill='yellow')
 brick_list[yell].color='yellow'
 
 bot_rack = Oleg.bot_racket(c, "aqua")
+
 rack = Oleg.racket(c, "blue")
-Ball = Oleg.ball(c, rack, bot_rack, "red")
+Ball = Oleg.ball(c, rack, "red")
 rack_length = False
 Super_Power = False
+Bot = False
 h = time.time()
 while 1:
-    bot_rack.draw()
     Ball.draw()
+    bot_rack.draw()
     b_pos = c.coords(Ball.id)
     
     if Super_Power and time.time() - h > 5.00:
@@ -61,11 +68,26 @@ while 1:
         c.delete('delete')
     elif rack_length and time.time() - h < 10.00:
         c.delete('delete')
-        c.create_text(400,580, text = 'You got sure powerit will end in ' +str(round(10.00 - (time.time() - h),2)) + 'seconds', font = ('Times', 17), tag = 'delete')
-        
+        c.create_text(400,580, text = 'The length of racket has increased, it will end in' +str(round(10.00 - (time.time() - h),2)) + 'seconds', font = ('Times', 17), tag = 'delete')
+
+    if Bot and time.time() - h > bot_rack_time:
+        Bot = False
+        c.delete('delete')
+        bot_rack.hide()
+        Ball.bot_rackid = 0
+    elif Bot and time.time() - h < bot_rack_time:
+        c.delete('delete')
+        c.create_text(400,580, text = 'An additional platforn will end in ' +str(round(bot_rack_time - (time.time() - h),2)) + 'seconds', font = ('Times', 17), tag = 'delete')
+            
     for x in brick_list:
         if x.hit_Ball(b_pos[0], b_pos[1], b_pos[2], b_pos[3]) == True:
             c.delete(brick_list.pop(brick_list.index(x)).id)
+            if x.color=='green':
+                h = time.time()
+                c.create_text(400,580, text = 'An additional platforn will end in ' +str(round(15.00 - (time.time() - h),2)) + 'seconds' , font = ('Times', 17), tag = 'delete')
+                Ball.bot_rackid = bot_rack.id
+                bot_rack.show()
+                Bot = True
             if x.color=='black':
                 h = time.time()
                 c.create_text(400,580, text = 'The length of racket has increased, it will end in' +str(round(10.00 - (time.time() - h),2)) + 'seconds' , font = ('Times', 17), tag = 'delete')
@@ -95,8 +117,10 @@ while 1:
         c.move(Ball.id, 400, 300)
         Ball.x = random.randint(-5,-1)
         Ball.y = random.randint(-5,-1)
+        
     if end() == 1:
         break
+    
     t.update_idletasks()
     t.update()
     time.sleep(0.01)
